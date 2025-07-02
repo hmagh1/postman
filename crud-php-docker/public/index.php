@@ -1,5 +1,6 @@
 <?php
-require_once '../src/UserController.php';
+
+require_once '/var/www/src/UserController.php';
 
 header("Content-Type: application/json");
 
