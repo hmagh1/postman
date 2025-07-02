@@ -1,0 +1,1 @@
+{"version":1,"defects":[],"times":{"Tests\\UserControllerTest::testDummy":0.242,"Tests\\UserControllerTest::testGetAllUsers":0.148,"Tests\\UserControllerTest::testGetUserById":0.003,"Tests\\UserControllerTest::testCreateUser":0.002}}
