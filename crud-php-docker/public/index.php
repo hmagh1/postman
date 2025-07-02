@@ -1,19 +1,23 @@
 <?php
 
-require_once '/var/www/src/UserController.php';
+require_once __DIR__ . '/../src/UserController.php';
 
+use App\UserController;
+
+// Réponse JSON systématique
 header("Content-Type: application/json");
 
+// Récupère la méthode et le chemin
 $method = $_SERVER['REQUEST_METHOD'];
-$path = explode('/', trim($_SERVER['REQUEST_URI'], '/'));
+$path   = explode('/', trim($_SERVER['REQUEST_URI'], '/'));
 
 $controller = new UserController();
 
-// Initialiser Memcached
+// Initialise Memcached
 $memcached = new Memcached();
 $memcached->addServer('memcached', 11211);
 
-// Point d’entrée de l’API
+// Routage basique
 if ($path[0] === 'users') {
     $id = $path[1] ?? null;
 
@@ -22,13 +26,16 @@ if ($path[0] === 'users') {
             if ($id) {
                 echo $controller->getUser($id);
             } else {
-                // Vérifier si les utilisateurs sont déjà en cache
-                $cached = $memcached->get('all_users');
+                // Cache GET /users
+                $cacheKey = 'all_users';
+                $cached   = $memcached->get($cacheKey);
                 if ($cached === false) {
                     $response = $controller->getAllUsers();
-                    $memcached->set('all_users', $response, 300); // 5 minutes
+                    $memcached->set($cacheKey, $response, 300);
+                    header('X-Cache: MISS');
                     echo $response;
                 } else {
+                    header('X-Cache: HIT');
                     echo $cached;
                 }
             }
@@ -36,7 +43,7 @@ if ($path[0] === 'users') {
 
         case 'POST':
             $data = json_decode(file_get_contents('php://input'), true);
-            $memcached->delete('all_users'); // Invalider le cache
+            $memcached->delete('all_users');
             echo $controller->createUser($data);
             break;
 
@@ -47,7 +54,7 @@ if ($path[0] === 'users') {
                 break;
             }
             $data = json_decode(file_get_contents('php://input'), true);
-            $memcached->delete('all_users'); // Invalider le cache
+            $memcached->delete('all_users');
             echo $controller->updateUser($id, $data);
             break;
 
@@ -57,7 +64,7 @@ if ($path[0] === 'users') {
                 echo json_encode(["message" => "User ID is required"]);
                 break;
             }
-            $memcached->delete('all_users'); // Invalider le cache
+            $memcached->delete('all_users');
             echo $controller->deleteUser($id);
             break;
 
