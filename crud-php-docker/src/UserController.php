@@ -4,7 +4,24 @@ class UserController {
     private $pdo;
 
     public function __construct() {
-        $this->pdo = new PDO("mysql:host=db;dbname=crud", "user", "userpass");
+        $retries = 5;
+        while ($retries--) {
+            try {
+                $this->pdo = new PDO(
+                    "mysql:host=db;dbname=crud;charset=utf8",
+                    "user",
+                    "userpass",
+                    [PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION]
+                );
+                // Connexion réussie : sortir de la boucle
+                return;
+            } catch (PDOException $e) {
+                // Attendre un peu avant de retenter
+                sleep(3);
+            }
+        }
+        // Si on arrive ici, toutes les tentatives ont échoué
+        throw new Exception("Impossible de se connecter à la base de données après plusieurs tentatives.");
     }
 
     public function getAllUsers() {
