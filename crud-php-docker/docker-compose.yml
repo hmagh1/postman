@@ -3,8 +3,7 @@ version: '3.8'
 services:
   php:
     build: .
-
-      volumes:
+       volumes:
   - ./public:/var/www/html
   - ./src:/var/www/src
 
