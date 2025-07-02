@@ -1,3 +1,5 @@
+# .github/workflows/ci.yml
+
 name: CI
 
 on:
@@ -24,4 +26,4 @@ jobs:
         run: composer install --no-interaction --prefer-dist
 
       - name: Run PHPUnit
-        run: vendor/bin/phpunit --configuration phpunit.xml
+        run: php vendor/bin/phpunit --configuration phpunit.xml
