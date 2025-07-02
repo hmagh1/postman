@@ -1,0 +1,8 @@
+# public/.htaccess
+RewriteEngine On
+
+# Si la cible n'existe pas comme fichier ou dossier,
+# redirige vers index.php
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^ index.php [QSA,L]
