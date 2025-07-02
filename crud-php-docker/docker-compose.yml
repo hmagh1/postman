@@ -1,9 +1,8 @@
+version: '3.8'
+
 services:
   php:
     build: .
-    volumes:
-      - ./public:/var/www/html
-      - ./src:/var/www/src
     ports:
       - "8010:80"
     depends_on:
@@ -11,6 +10,11 @@ services:
         condition: service_healthy
       memcached:
         condition: service_started
+    volumes:
+      # 1) Monte tout le projet racine dans /var/www
+      - ./:/var/www
+      # 2) Monte uniquement le dossier public dans /var/www/html (DocumentRoot Apache)
+      - ./public:/var/www/html
 
   db:
     image: mysql:8
