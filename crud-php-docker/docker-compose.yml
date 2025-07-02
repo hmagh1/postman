@@ -9,7 +9,8 @@ services:
     ports:
       - "8010:80"
     depends_on:
-      - db
+      db:
+        condition: service_healthy
 
   db:
     image: mysql:8
@@ -23,6 +24,11 @@ services:
       - ./db:/docker-entrypoint-initdb.d
     ports:
       - "3306:3306"
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 5s
+      timeout: 2s
+      retries: 5
 
   phpmyadmin:
     image: phpmyadmin/phpmyadmin
