@@ -1,7 +1,11 @@
 <?php
+namespace App;
+
+use PDO;
+use PDOException;
 
 class UserController {
-    private $pdo;
+    private PDO $pdo;
 
     public function __construct() {
         $retries = 5;
@@ -9,8 +13,8 @@ class UserController {
             try {
                 $this->pdo = new PDO(
                     "mysql:host=db;dbname=crud;charset=utf8",
-                    "user",
-                    "userpass",
+                    getenv('MYSQL_USER') ?: 'user',
+                    getenv('MYSQL_PASSWORD') ?: 'userpass',
                     [PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION]
                 );
                 return;
@@ -60,7 +64,7 @@ class UserController {
             http_response_code(201);
             return json_encode([
                 "message" => "User created",
-                "id" => $this->pdo->lastInsertId()
+                "id"      => $this->pdo->lastInsertId()
             ]);
         } catch (PDOException $e) {
             return $this->errorResponse("Failed to create user", $e);
@@ -74,7 +78,9 @@ class UserController {
         }
 
         try {
-            $stmt = $this->pdo->prepare("UPDATE users SET name = ?, email = ? WHERE id = ?");
+            $stmt = $this->pdo->prepare(
+                "UPDATE users SET name = ?, email = ? WHERE id = ?"
+            );
             $stmt->execute([$data['name'], $data['email'], $id]);
             return json_encode(["message" => "User updated"]);
         } catch (PDOException $e) {
@@ -92,11 +98,11 @@ class UserController {
         }
     }
 
-    private function errorResponse($message, $exception) {
+    private function errorResponse(string $message, \Throwable $e) {
         http_response_code(500);
         return json_encode([
-            "error" => $message,
-            "details" => $exception->getMessage()
+            "error"   => $message,
+            "details" => $e->getMessage()
         ]);
     }
 }
