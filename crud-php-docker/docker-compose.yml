@@ -3,10 +3,9 @@ version: '3.8'
 services:
   php:
     build: .
-       volumes:
-  - ./public:/var/www/html
-  - ./src:/var/www/src
-
+    volumes:
+      - ./public:/var/www/html
+      - ./src:/var/www/src
     ports:
       - "8010:80"
     depends_on:
