@@ -29,8 +29,8 @@ COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
 # 6) Définir le répertoire de travail
 WORKDIR /var/www/html
 
-# 7) Copier les fichiers Composer et installer les dépendances
-COPY composer.json composer.lock ./
+# 7) Copier composer.json et installer les dépendances
+COPY composer.json ./
 RUN composer install --no-interaction --prefer-dist --optimize-autoloader
 
 # 8) Copier le reste de l’application
