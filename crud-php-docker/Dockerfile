@@ -1,11 +1,14 @@
 FROM php:8.1-apache
 
-# extensions
-RUN docker-php-ext-install pdo pdo_mysql
+# Installer les libs pour memcached + PECL + PHP extensions
+RUN apt-get update && apt-get install -y \
+      libmemcached-dev \
+      zlib1g-dev \
+    && pecl install memcached \
+    && docker-php-ext-enable memcached \
+    && docker-php-ext-install pdo pdo_mysql
 
-# activer mod_rewrite
-RUN a2enmod rewrite
-
-# autoriser .htaccess dans /var/www/html
-RUN printf '<Directory /var/www/html>\n    AllowOverride All\n</Directory>\n' \
-    >> /etc/apache2/apache2.conf
+# Activer mod_rewrite et autoriser .htaccess
+RUN a2enmod rewrite \
+ && printf '<Directory /var/www/html>\n    AllowOverride All\n</Directory>\n' \
+      >> /etc/apache2/apache2.conf
