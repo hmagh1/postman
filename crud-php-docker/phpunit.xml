@@ -2,17 +2,16 @@
 <phpunit bootstrap="vendor/autoload.php"
          colors="true"
          verbose="true">
-    <testsuites>
-        <testsuite name="Unit Tests">
-            <directory>tests</directory>
-        </testsuite>
-    </testsuites>
+  <testsuites>
+    <testsuite name="Unit Tests">
+      <directory>tests</directory>
+    </testsuite>
+  </testsuites>
 
-    <!-- Configuration pour la couverture -->
-    <coverage processUncoveredFiles="true">
-        <include>
-            <!-- Adapte ce chemin au dossier de ton code source -->
-            <directory suffix=".php">src</directory>
-        </include>
-    </coverage>
+  <coverage processUncoveredFiles="true">
+    <include>
+      <!-- Adapte ce chemin à ton code -->
+      <directory suffix=".php">src</directory>
+    </include>
+  </coverage>
 </phpunit>
