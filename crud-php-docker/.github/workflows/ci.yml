@@ -24,15 +24,10 @@ jobs:
       - name: Install dependencies
         run: composer install --no-interaction --prefer-dist
 
-      - name: Create SQLite test DB (si besoin)
-        run: |
-          mkdir -p database
-          touch database/test.sqlite
-
-      - name: Run PHPUnit & generate coverage
+      - name: Run PHPUnit with coverage using PHP directly
         run: |
           mkdir -p build/logs
-          php vendor/bin/phpunit \
+          php -d xdebug.mode=coverage vendor/phpunit/phpunit/phpunit \
             --configuration phpunit.xml \
             --coverage-clover=build/logs/clover.xml \
             --colors=never | tee build/logs/output.txt
