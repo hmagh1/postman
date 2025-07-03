@@ -1,4 +1,4 @@
-name: CI – PHPUnit & Coverage
+name: CI – PHPUnit & Coverage via Composer
 
 on:
   push:
@@ -18,28 +18,23 @@ jobs:
         uses: shivammathur/setup-php@v2
         with:
           php-version: '8.1'
-          extensions: mbstring, pdo_sqlite, pdo_mysql, xdebug
           coverage: xdebug
+          extensions: mbstring, pdo_sqlite, pdo_mysql
 
       - name: Install dependencies
         run: composer install --no-interaction --prefer-dist
 
-      - name: Run PHPUnit via le binaire correct
+      - name: Run PHPUnit via composer script
         run: |
           mkdir -p build/logs
-          pwd
-          ls -l vendor/phpunit/phpunit/phpunit
-          php vendor/phpunit/phpunit/phpunit \
-            --configuration phpunit.xml \
-            --coverage-clover=build/logs/clover.xml \
-            --colors=never | tee build/logs/output.txt
+          composer test | tee build/logs/output.txt
 
       - name: Afficher la couverture
-        run: grep -m1 'Lines:' build/logs/output.txt || echo "Couverture non trouvée"
+        run: grep -m1 'Lines:' build/logs/output.txt || echo "Aucune couverture trouvée"
 
       - name: Vérifier le seuil de couverture (75 %)
         run: |
-          COVERAGE=$(grep -Po "Lines:\s*\K[0-9]+(\.[0-9]+)?(?=%)" build/logs/output.txt || echo "0")
+          COVERAGE=$(grep -Po "Lines:\\s*\\K[0-9]+(\\.[0-9]+)?(?=%)" build/logs/output.txt || echo "0")
           REQUIRED=75
           echo "Couverture actuelle : $COVERAGE % (seuil : $REQUIRED %)"
           if (( $(echo "$COVERAGE < $REQUIRED" | bc -l) )); then
