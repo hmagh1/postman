@@ -1,8 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<phpunit bootstrap="vendor/autoload.php" colors="true">
-  <testsuites>
-    <testsuite name="Unit Tests">
-      <directory>./tests</directory>
-    </testsuite>
-  </testsuites>
+<phpunit bootstrap="vendor/autoload.php"
+         colors="true"
+         verbose="true">
+    <testsuites>
+        <testsuite name="Unit Tests">
+            <directory>tests</directory>
+        </testsuite>
+    </testsuites>
+
+    <!-- Configuration pour la couverture -->
+    <coverage processUncoveredFiles="true">
+        <include>
+            <!-- Adapte ce chemin au dossier de ton code source -->
+            <directory suffix=".php">src</directory>
+        </include>
+    </coverage>
 </phpunit>
