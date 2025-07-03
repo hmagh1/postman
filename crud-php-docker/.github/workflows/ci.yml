@@ -29,6 +29,9 @@ jobs:
           mkdir -p database
           touch database/test.sqlite
 
+      - name: Fix PHPUNIT permissions
+        run: chmod +x vendor/bin/phpunit
+
       - name: Run PHPUnit & generate coverage
         run: |
           mkdir -p build/logs
