@@ -1,4 +1,4 @@
-name: CI – PHPUnit & Coverage
+name: CI – PHPUnit & Coverage Check
 
 on:
   push:
@@ -25,25 +25,22 @@ jobs:
         run: composer install --no-interaction --prefer-dist
         working-directory: crud-php-docker
 
-      - name: Run PHPUnit via composer
+      - name: Run PHPUnit and capture coverage
         run: |
           mkdir -p build/logs
           composer test | tee build/logs/output.txt
         working-directory: crud-php-docker
 
-      - name: Afficher la couverture
+      - name: Check and enforce minimum coverage (75%)
         run: |
-          COVERAGE=$(grep -Po "Lines:\\s*\\K[0-9]+(\\.[0-9]+)?" build/logs/output.txt || echo "0")
-          echo "🧪 Couverture de code : $COVERAGE %"
-        working-directory: crud-php-docker
-
-      - name: Bloquer si couverture > 75 %
-        run: |
-          COVERAGE=$(grep -Po "Lines:\\s*\\K[0-9]+(\\.[0-9]+)?" build/logs/output.txt || echo "0")
-          MAX=75
-          echo "📊 Couverture actuelle : $COVERAGE % (max autorisé : $MAX %)"
-          if (( $(echo "$COVERAGE > $MAX" | bc -l) )); then
-            echo "::error ::Couverture supérieure à ${MAX}% – PR refusée"
+          COVERAGE=$(grep -Po "Lines:\s*\K[0-9]+(\.[0-9]+)?" build/logs/output.txt || echo "0")
+          MIN=75
+          echo "🧪 Couverture détectée : $COVERAGE %"
+          echo "📊 Seuil minimum requis : $MIN %"
+          if (( $(echo "$COVERAGE < $MIN" | bc -l) )); then
+            echo "::error title=Couverture insuffisante::❌ $COVERAGE % < $MIN % – PR refusée"
             exit 1
+          else
+            echo "::notice title=Couverture OK::✅ $COVERAGE % ≥ $MIN % – PR acceptée"
           fi
         working-directory: crud-php-docker
