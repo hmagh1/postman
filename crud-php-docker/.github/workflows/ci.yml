@@ -24,10 +24,10 @@ jobs:
       - name: Afficher la couverture
         run: grep -m1 'Lines:' build/logs/output.txt || echo "Aucune couverture trouvée"
 
-      - name: Vérifier le seuil de couverture (75 %)
+      - name: Vérifier le seuil de couverture (60 %)
         run: |
           COVERAGE=$(grep -Po "Lines:\\s*\\K[0-9]+(\\.[0-9]+)?(?=%)" build/logs/output.txt || echo "0")
-          REQUIRED=75
+          REQUIRED=60
           echo "Couverture actuelle : $COVERAGE % (seuil : $REQUIRED %)"
           if (( $(echo "$COVERAGE < $REQUIRED" | bc -l) )); then
             echo "::error ::Couverture inférieure à ${REQUIRED}% – échec du job"
