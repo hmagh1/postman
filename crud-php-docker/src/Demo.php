@@ -3,6 +3,10 @@
 namespace App;
 
 class Demo {
+
+    public function hello() {
+        return "hello";
+
     public function alwaysTrue() {
         return true;
     }
@@ -13,5 +17,6 @@ class Demo {
 
     public function getNumber() {
         return 42;
+
     }
 }
