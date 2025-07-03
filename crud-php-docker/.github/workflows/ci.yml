@@ -30,7 +30,7 @@ jobs:
       - name: Vérifier le seuil de couverture (60 %)
         run: |
           COVERAGE=$(grep -Po "Lines:\\s*\\K[0-9]+(\\.[0-9]+)?(?=%)" build/logs/output.txt || echo "0")
-          REQUIRED=60
+          REQUIRED=75
           echo "Couverture actuelle : $COVERAGE % (seuil : $REQUIRED %)"
           if (( $(echo "$COVERAGE < $REQUIRED" | bc -l) )); then
             echo "::error ::Couverture inférieure à ${REQUIRED}% – échec du job"
