@@ -1,6 +1,4 @@
-# .github/workflows/ci.yml
-
-name: CI
+name: CI – PHPUnit & Coverage
 
 on:
   push:
@@ -20,10 +18,33 @@ jobs:
         uses: shivammathur/setup-php@v2
         with:
           php-version: '8.1'
-          extensions: mbstring, pdo_sqlite, pdo_mysql, memcached
+          extensions: mbstring, pdo_sqlite, pdo_mysql, memcached, xdebug
+          coverage: xdebug
 
       - name: Install dependencies
         run: composer install --no-interaction --prefer-dist
 
-      - name: Run PHPUnit
-        run: php vendor/bin/phpunit --configuration phpunit.xml
+      - name: Create test DB (si besoin)
+        run: |
+          sqlite3 database/test.sqlite < database/schema.sql || true
+
+      - name: Run PHPUnit & generate coverage
+        run: |
+          mkdir -p build/logs
+          vendor/bin/phpunit \
+            --configuration phpunit.xml \
+            --coverage-clover=build/logs/clover.xml \
+            --colors=never | tee build/logs/output.txt
+
+      - name: Afficher la couverture
+        run: grep -m1 'Lines:' build/logs/output.txt
+
+      - name: Vérifier le seuil de couverture (75 %)
+        run: |
+          COVERAGE=$(grep -Po "Lines:\s*\K[0-9]+(\.[0-9]+)?(?=%)" build/logs/output.txt)
+          REQUIRED=75
+          echo "Couverture actuelle : $COVERAGE % (seuil : $REQUIRED %)"
+          if (( $(echo "$COVERAGE < $REQUIRED" | bc -l) )); then
+            echo "::error ::Couverture <$REQUIRED % – échec du job"
+            exit 1
+          fi
