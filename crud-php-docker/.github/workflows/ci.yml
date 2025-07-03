@@ -24,16 +24,18 @@ jobs:
       - name: Install dependencies
         run: composer install --no-interaction --prefer-dist
 
-      - name: Run PHPUnit with coverage using PHP directly
+      - name: Run PHPUnit via le binaire correct
         run: |
           mkdir -p build/logs
-          php -d xdebug.mode=coverage vendor/phpunit/phpunit/phpunit \
+          pwd
+          ls -l vendor/phpunit/phpunit/phpunit
+          php vendor/phpunit/phpunit/phpunit \
             --configuration phpunit.xml \
             --coverage-clover=build/logs/clover.xml \
             --colors=never | tee build/logs/output.txt
 
       - name: Afficher la couverture
-        run: grep -m1 'Lines:' build/logs/output.txt || echo "Aucune couverture trouvée"
+        run: grep -m1 'Lines:' build/logs/output.txt || echo "Couverture non trouvée"
 
       - name: Vérifier le seuil de couverture (75 %)
         run: |
