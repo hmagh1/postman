@@ -22,6 +22,10 @@ jobs:
 
       - name: Afficher la couverture
         run: grep -m1 'Lines:' build/logs/output.txt || echo "Aucune couverture trouvée"
+      - name: Afficher le pourcentage de couverture
+        run: |
+          COVERAGE=$(grep -Po "Lines:\s*\K[0-9]+(\.[0-9]+)?(?=%)" build/logs/output.txt || echo "0")
+          echo "🧪 Couverture de code : $COVERAGE%"
 
       - name: Vérifier le seuil de couverture (60 %)
         run: |
