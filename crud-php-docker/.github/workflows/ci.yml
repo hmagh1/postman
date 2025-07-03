@@ -24,6 +24,10 @@ jobs:
       - name: Install dependencies
         run: composer install --no-interaction --prefer-dist
 
+      # <<< Insère cette étape juste ici
+      - name: Make phpunit executable
+        run: chmod +x vendor/bin/phpunit
+
       - name: Create test DB (si besoin)
         run: |
           sqlite3 database/test.sqlite < database/schema.sql || true
