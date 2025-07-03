@@ -24,18 +24,15 @@ jobs:
       - name: Install dependencies
         run: composer install --no-interaction --prefer-dist
 
-      # <<< Insère cette étape juste ici
-      - name: Make phpunit executable
-        run: chmod +x vendor/bin/phpunit
-
       - name: Create test DB (si besoin)
         run: |
-          sqlite3 database/test.sqlite < database/schema.sql || true
+          mkdir -p database
+          touch database/test.sqlite
 
       - name: Run PHPUnit & generate coverage
         run: |
           mkdir -p build/logs
-          vendor/bin/phpunit \
+          php vendor/bin/phpunit \
             --configuration phpunit.xml \
             --coverage-clover=build/logs/clover.xml \
             --colors=never | tee build/logs/output.txt
