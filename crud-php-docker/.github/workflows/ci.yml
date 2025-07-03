@@ -17,9 +17,8 @@ jobs:
         run: composer install --no-interaction --prefer-dist
 
       - name: Run PHPUnit via composer script
-        run: |
-          mkdir -p build/logs
-          composer test | tee build/logs/output.txt
+        run: vendor/bin/phpunit --configuration phpunit.xml
+
 
       - name: Afficher la couverture
         run: grep -m1 'Lines:' build/logs/output.txt || echo "Aucune couverture trouvée"
