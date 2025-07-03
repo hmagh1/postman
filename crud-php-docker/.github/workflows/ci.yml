@@ -23,16 +23,19 @@ jobs:
 
       - name: Install dependencies
         run: composer install --no-interaction --prefer-dist
+        working-directory: crud-php-docker
 
       - name: Run PHPUnit via composer
         run: |
           mkdir -p build/logs
           composer test | tee build/logs/output.txt
+        working-directory: crud-php-docker
 
       - name: Afficher la couverture
         run: |
           COVERAGE=$(grep -Po "Lines:\\s*\\K[0-9]+(\\.[0-9]+)?" build/logs/output.txt || echo "0")
           echo "🧪 Couverture de code : $COVERAGE %"
+        working-directory: crud-php-docker
 
       - name: Bloquer si couverture > 75 %
         run: |
@@ -43,3 +46,4 @@ jobs:
             echo "::error ::Couverture supérieure à ${MAX}% – PR refusée"
             exit 1
           fi
+        working-directory: crud-php-docker
