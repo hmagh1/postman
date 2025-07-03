@@ -11,10 +11,7 @@ services:
       memcached:
         condition: service_started
     volumes:
-      # 1) Monte tout le projet racine dans /var/www
-      - ./:/var/www
-      # 2) Monte uniquement le dossier public dans /var/www/html (DocumentRoot Apache)
-      - ./public:/var/www/html
+      - ./:/var/www  # Monte tout le projet (vendor/ inclus)
 
   db:
     image: mysql:8
